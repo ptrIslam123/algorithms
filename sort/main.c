@@ -1,7 +1,9 @@
 #include <stdio.h>
 
 #include "util.h"
+#include "bubleSort.h"
 #include "selectionSort.h"
+#include "insertionSort.h"
 
 
 int main()
@@ -14,7 +16,7 @@ int main()
     printf("before sort:\t");
     print(data, size);
 
-    selectionSort(data, size);
+    insertionSort(data, size);
 
     printf("after sort:\t");
     print(data, size);
