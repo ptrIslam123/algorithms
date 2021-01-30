@@ -16,9 +16,9 @@ void selectionSort(int *arr, int size)
 def selectionSort(arr):
     size = len(arr)
 
-    for i in range(size - 1):
-        minIndx = getIndxMinVal(arr, i, size)
-        swap(arr, i, minIndx)
-
+    for item in range(size):
+        minIndxVal = getIndxMinVal(arr, item, size)
+        #(arr[item], arr[minIndxVal]) = (arr[minIndxVal], arr[item])
+        swap(arr, item, minIndxVal)
     return arr
 

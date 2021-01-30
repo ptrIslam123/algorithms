@@ -39,7 +39,55 @@ array_and_size_t* quickSort(int* arr ,int size)
 
 
 
+int* mergeSort(int *l_arr, int *r_arr,  int l_size, int r_size)
+{
+    const int total_size = l_size + r_size;
 
+    int *new_arr = (int*)malloc(total_size * sizeof(int));
+
+
+    int min_size = minVal(l_size, r_size);
+    int *min_arr, max_element = 0;
+
+    for (int i = 0; i < min_size; ++i)
+    {
+        array_and_size_t* res = get_min_array_and_max_element(  l_arr,
+                                                                r_arr,
+                                                                i   );
+
+        min_arr     = res->arr;
+        max_element = res->size;    // size -> max current element min(l_arr[i], r_arr[i])
+
+        int j = i;
+
+        while (min_arr[j] < max_element)
+        {
+            new_arr[j] = min_arr[j];
+            j++;
+        }
+        new_arr[j] = max_element;
+    }
+    return new_arr;
+}
+
+
+
+array_and_size_t* get_min_array_and_max_element(int *l_arr, int *r_arr, 
+                                                int indx)
+{
+    array_and_size_t* result = (array_and_size_t*)malloc(sizeof(array_and_size_t));
+
+    if (l_arr[indx] < r_arr[indx])
+    {
+        result->arr     = l_arr;
+        result->size    = r_arr[indx];
+        return result;
+    }
+    
+    result->arr     = r_arr;
+    result->size    = l_arr[indx];
+    return result;
+}
 
 array_and_size_t* make_array_and_size_struct(int *arr, int size)
 {
@@ -75,10 +123,7 @@ int get_partition(int *arr, int size)
     return arr[0];  // for example! 
 }
 
-int* mergeSort(int *l_arr, int *r_arr,  int l_size, int r_size)
-{
-    return NULL;
-}
+
 
 part_t* splitArray(int *arr, int x, int size)
 {

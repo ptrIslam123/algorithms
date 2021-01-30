@@ -1,27 +1,37 @@
 #include <stdio.h>
 #include "util.h"
 
+int* gen_array(int size)
+{
+    int *arr = (int*)malloc(sizeof(int) * size);
 
+    for (int i = 0; i < size; i++)
+    {
+        arr[i] = rand() % 100;
+    }
+    return arr;
+}
+
+int minVal(int l, int r)
+{
+    if (l < r)
+        return l;
+    return r;
+}
 
 int getIndxMinVal(int *arr, int beg, int end)
 {
-    int minVal  = 0;
-    int minIndx = 0;
-
-    if (beg >= end)
-        return -1;
-
-    minVal = arr[beg];
+    int minVal = arr[beg], minIndxVal = beg;
 
     for (int i = beg + 1; i < end; ++i)
     {
         if (arr[i] < minVal)
         {
-            minVal  = arr[i];
-            minIndx = i;
+            minVal = arr[i];
+            minIndxVal = i;
         }
-    }
-    return minIndx;   
+    } 
+    return minIndxVal;
 }
 
 int checkSort(int *arr, int size)

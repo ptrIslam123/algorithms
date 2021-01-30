@@ -3,16 +3,27 @@ from util import *
 from bubleSort import bubleSort
 from selectionSort import selectionSort
 from insertionSort import insertionSort
+from quickSort import *
 
 
 def main():
-    data = [-12, 34, 0, 343434, 4]
 
-    print ("before :", data)
-    sortData = insertionSort(data)
-    print ("after  :", sortData)
+    for i in range(10):
+        
+        arr = gen_array(i + 9)
+        print ("iteration: ", i + 1)
+        print ("before sort: ",arr)
 
-    return checkSort(sortData)
+        sort_data = selectionSort(arr)
+
+        print ("after sort:  ", sort_data)
+
+        checkSort(sort_data)
+
+
+
+
+    #return checkSort(sortData)
 
 
 if __name__ == "__main__":

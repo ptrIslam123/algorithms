@@ -1,18 +1,28 @@
-#! /usr/bin/env python 
+#! /usr/bin/env python
+import random as r 
+
+def gen_array(size):
+    arr = []
+
+    for i in range(size):
+        arr.append(
+            r.randint(1, 1000)
+        )
+    return arr
+
+
 
 def getIndxMinVal(arr, beg, end):
-    minIndx = 0; minVal = 0
+    minVal = arr[beg]; minIndxVal = beg
     
-    if beg >= end:
-        return -1
-    minVal = arr[beg]
-
     for i in range(beg + 1, end):
         if arr[i] < minVal:
-            minVal  = arr[i]
-            minIndx = i
+            minVal = arr[i]
+            minIndxVal = i
+       
+    return minIndxVal
 
-    return minIndx
+
 
 def checkSort(arr):
     i = 0

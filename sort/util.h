@@ -1,6 +1,11 @@
 #ifndef _UTIL_H_
 #define _UTIL_H_
 
+#include <stdlib.h>
+
+int* gen_array(int size);
+
+int minVal(int l, int r);
 
 int getIndxMinVal(int *arr, int beg, int end);
 
