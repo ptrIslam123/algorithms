@@ -5,6 +5,8 @@
 
 int* gen_array(int size);
 
+int min(int , int);
+
 int minVal(int l, int r);
 
 int getIndxMinVal(int *arr, int beg, int end);

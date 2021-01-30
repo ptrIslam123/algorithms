@@ -19,6 +19,13 @@ int minVal(int l, int r)
     return r;
 }
 
+int min(int lv, int rv)
+{
+    if (lv < rv)
+        return lv;
+    return rv;
+}
+
 int getIndxMinVal(int *arr, int beg, int end)
 {
     int minVal = arr[beg], minIndxVal = beg;

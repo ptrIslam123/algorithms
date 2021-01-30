@@ -14,7 +14,7 @@ def main():
         print ("iteration: ", i + 1)
         print ("before sort: ",arr)
 
-        sort_data = selectionSort(arr)
+        sort_data = quickSort(arr)
 
         print ("after sort:  ", sort_data)
 
@@ -28,3 +28,5 @@ def main():
 
 if __name__ == "__main__":
     main()
+
+    
