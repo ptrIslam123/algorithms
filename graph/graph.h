@@ -15,7 +15,7 @@ struct node;
 
 typedef struct graph
 {
-    int         num_vertex;
+    int         count_vertex;
     int         *visited;
     struct node **adj_list;
 } graph_t;
@@ -23,13 +23,13 @@ typedef struct graph
 
 typedef struct node
 {
-    int         vertex;
+    int         num_vertex;
     struct node *next_node;
 } node_t;
 
 
-void    add_edge(graph_t* , int , int );
-void    remove_edge(graph_t* , int , int );
+node_t* add_edge(graph_t* , int , int );
+node_t* remove_edge(graph_t* , int , int );
 void    print_graph(graph_t* );
 void    print_adj_list(node_t* );
 node_t* find_edge(graph_t* , int );

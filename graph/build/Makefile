@@ -10,10 +10,14 @@ link:
 
 build:
 	make compil
-	mkae link
+	make link
+	
 
 run:
 	./main
+
+debug:
+	kdbg ./main
 
 clear:
 	rm *.o
