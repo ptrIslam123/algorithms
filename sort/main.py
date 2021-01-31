@@ -4,6 +4,7 @@ from bubleSort import bubleSort
 from selectionSort import selectionSort
 from insertionSort import insertionSort
 from quickSort import *
+from mergeSort import mergeSort
 
 
 def main():
@@ -14,7 +15,7 @@ def main():
         print ("iteration: ", i + 1)
         print ("before sort: ",arr)
 
-        sort_data = quickSort(arr)
+        sort_data = mergeSort(arr)
 
         print ("after sort:  ", sort_data)
 

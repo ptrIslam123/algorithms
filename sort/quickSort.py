@@ -26,8 +26,8 @@ def split_array(arr, x):
 def quickSort(arr):
     size = len(arr)
 
-    if size <= 1:
-        return arr
+    if size <= MIN_SIZE:
+        return selectionSort(arr)
 
     x               = get_partition(arr)
     l_arr, r_arr    = split_array(arr, x)
