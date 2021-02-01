@@ -2,7 +2,7 @@ main.o:
 	gcc -g ../main.c
 
 compil:
-	gcc -g -c ../*.c
+	gcc -g -Wall -c ../*.c
 
 link:
 	gcc *.o -o main
