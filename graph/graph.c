@@ -1,7 +1,112 @@
 #include <stdio.h>
+#include <limits.h>
 
 #include "graph.h"
 #include "util.h"
+
+
+/*
+    1.  получаем начальную вершину с которой начинаем. 
+        Помечаем эту вершину как посещенную,
+        а так же получаем список смежных с ней вершин.
+
+    2.  В цикле рекурсивно проходимся по всем смежных вершинам
+        которые еще не были посещены. В этом цикле высчитываем новые 
+        весовые коэффиценты для каждой смежной вершины 
+        по формуле (weight = weight + parent_weight)
+
+*/
+
+void eval_weight_graph(adj_matrix_t *p_graph, int vertex, int parent_weigth)
+{
+    p_graph->visited[vertex] = _VISITED_;
+
+    int *adj_list = p_graph->m[vertex];
+    const int size = p_graph->size;
+    int new_weight = 0;
+    
+    for (int i = 0; i < size; ++i)
+    {
+        if (p_graph->visited[i] == _IS_NOT_VISIED_ && adj_list[i] != 0)
+        {
+            new_weight = adj_list[i] + parent_weigth;
+            if (new_weight < p_graph->weight[vertex])
+            {
+                p_graph->weight[vertex] = new_weight;
+                eval_weight_graph(p_graph, i, p_graph->weight[vertex]);
+            }
+        }
+    }
+}
+
+
+void algorithm_dijkstra(adj_matrix_t *matrix , int vertex)
+{
+
+}
+
+
+
+
+void print_weight_graph(adj_matrix_t *p_graph)
+{
+    const int size = p_graph->size;
+
+    for (int i = 0; i < size; ++i)
+    {
+        if (p_graph->weight[i] == INT_MAX)
+            printf("vertex_weight[%d] -> INF\n", i);
+        else
+            printf("vertex_weight[%d] -> %d\n", i, p_graph->weight[i]);
+    }
+
+    printf("\n");
+}
+
+
+void print_adj_matrix(adj_matrix_t *m)
+{
+    const int size = m->size;
+
+    for (int i = 0; i < size; ++i)
+    {
+        for (int j = 0; j < size; ++j)
+            printf(" %d ", m->m[i][j]);
+        
+        printf("\n");
+    }
+    printf("\n");
+}
+
+
+
+void set_val_adj_matrix(adj_matrix_t *matrix, int **array_adj_list)
+{
+    const int size =matrix->size;
+
+    for (int i = 0; i < size; ++i)
+    {
+        set_matrix_adj_list(matrix, i, array_adj_list[i]);
+    }
+}
+
+
+
+
+void free_adj_matrix(adj_matrix_t *matrix)
+{
+    const int size = matrix->size;
+
+    for (int i = 0; i < size; ++i)
+    {
+        free(matrix->m[i]);
+    }
+
+    free(matrix->m);
+    free(matrix);
+
+    matrix = NULL;
+}
 
 
 

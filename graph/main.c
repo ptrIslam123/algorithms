@@ -4,7 +4,49 @@
 #include "util.h"
 #include "test.h"
 
+
+void test1();
+void test2();
+
 int main()
+{
+    
+    adj_matrix_t *m = make_adj_matrix(4);
+
+    int v0[] = {0, 2, 1, 0};
+    int v1[] = {2, 0, 0, 5};
+    int v2[] = {1, 0, 0, 4};
+    int v3[] = {0, 5, 4, 0};
+
+    int *v[] = {v0, v1, v2, v3};
+
+    set_val_adj_matrix(m, v);
+
+    print_adj_matrix(m);
+    
+    print_weight_graph(m);
+    eval_weight_graph(m, 0, 0);
+    print_weight_graph(m);
+
+    /*
+    set_matrix_adj_list(m, 0, v0);
+    set_matrix_adj_list(m, 1, v1);
+    set_matrix_adj_list(m, 2, v2);
+    set_matrix_adj_list(m, 3, v3);
+    */
+    
+    //print_adj_matrix(m);
+
+    free_adj_matrix(m);
+
+    return 0;
+}
+
+
+void test2()
+{}
+
+void test1()
 {
     graph_t* g = make_graph(4);
     
@@ -62,6 +104,4 @@ int main()
 
 
     free_graph(g);
-
-    return 0;
 }

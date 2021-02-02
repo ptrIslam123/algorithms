@@ -4,6 +4,29 @@
 #define _IS_NOT_VISIED_ ( 0 ) 
 #define _VISITED_       ( 1 )
 
+struct adj_matrix;
+
+typedef struct adj_matrix
+{
+    int **m;
+    int *visited;
+    int *weight;
+    int size;
+} adj_matrix_t;
+
+
+void eval_weight_graph(adj_matrix_t* , int , int );
+void algorithm_dijkstra(adj_matrix_t* , int );
+
+void print_weight_graph(adj_matrix_t *);
+void print_adj_matrix(adj_matrix_t* );
+
+void set_val_adj_matrix(adj_matrix_t* , int** );
+
+void free_adj_matrix(adj_matrix_t* );
+
+
+
 struct graph;
 struct node;
 
@@ -19,6 +42,9 @@ typedef struct graph
     int         *visited;
     struct node **adj_list;
 } graph_t;
+
+
+
 
 
 typedef struct node
