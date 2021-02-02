@@ -5,6 +5,13 @@
 #include "util.h"
 
 
+void algorithm_dijkstra(graph_t *p_graph, int vertex)
+{
+    p_graph->visited[vertex] = _VISITED_;
+    eval_weight_graph(p_graph, vertex, 0);
+}
+
+
 /*
     1.  получаем начальную вершину с которой начинаем. 
         Помечаем эту вершину как посещенную,
@@ -16,51 +23,83 @@
         по формуле (weight = weight + parent_weight)
 
 */
-
-void eval_weight_graph(adj_matrix_t *p_graph, int vertex, int parent_weigth)
+void eval_weight_graph(graph_t *p_graph, int vertex, int parent_weight)
 {
-    p_graph->visited[vertex] = _VISITED_;
+    node_t *cur_vert = p_graph->adj_list[vertex];
+    int cur_num_vert = 0;
 
-    int *adj_list = p_graph->m[vertex];
-    const int size = p_graph->size;
-    int new_weight = 0;
-    
-    for (int i = 0; i < size; ++i)
+    while (cur_vert != NULL)
     {
-        if (p_graph->visited[i] == _IS_NOT_VISIED_ && adj_list[i] != 0)
+        cur_num_vert = cur_vert->num_vertex;
+        
+        if (p_graph->visited[cur_num_vert] == _IS_NOT_VISIED_)
         {
-            new_weight = adj_list[i] + parent_weigth;
-            if (new_weight < p_graph->weight[vertex])
-            {
-                p_graph->weight[vertex] = new_weight;
-                eval_weight_graph(p_graph, i, p_graph->weight[vertex]);
-            }
+            p_graph->visited[cur_num_vert] = _VISITED_;
+            update_weight_vertex(cur_vert, parent_weight);
+
+            eval_weight_graph(p_graph, cur_num_vert, cur_vert->weight);
         }
+
+        cur_vert = cur_vert->next_node;
+    }
+}
+
+void update_weight_vertex(node_t *vertex, int parent_weight)
+{
+    int cur_weigth = vertex->weight;
+    int new_weight = cur_weigth + parent_weight;
+
+    if (new_weight < cur_weigth)
+    {
+        vertex->weight = new_weight;
     }
 }
 
 
-void algorithm_dijkstra(adj_matrix_t *matrix , int vertex)
-{
-
-}
 
 
-
-
-void print_weight_graph(adj_matrix_t *p_graph)
+void print_visited_adj_matrix(adj_matrix_t *p_graph)
 {
     const int size = p_graph->size;
 
+    printf("visited_vertex {\n");
     for (int i = 0; i < size; ++i)
     {
-        if (p_graph->weight[i] == INT_MAX)
-            printf("vertex_weight[%d] -> INF\n", i);
-        else
-            printf("vertex_weight[%d] -> %d\n", i, p_graph->weight[i]);
+        for (int j = 0; j < size; ++j)
+            printf(" %d ", p_graph->visited[i][j]);
+        
+        printf("\n");
     }
+    printf("}\n");
+}
 
-    printf("\n");
+
+void print_weight_graph(graph_t *p_graph)
+{
+    const int size  = p_graph->count_vertex;
+    node_t *item    = NULL;
+
+    printf("{\n\n");
+    for (int i = 0; i < size; ++i)
+    {
+        item = p_graph->adj_list[i];
+
+        while (item != NULL)
+        {
+            if (item->weight == INT_MAX)
+            {
+                printf("vertex_weight[%d] -> INF\n", item->num_vertex);
+            }
+            else
+            {
+                printf("vertex_weight[%d] -> %d\n", item->num_vertex, item->weight);
+            }
+
+            item = item->next_node;
+        } 
+        printf("\n");   
+    }
+    printf("}\n\n");
 }
 
 
@@ -186,7 +225,7 @@ void set_visited_val(graph_t *p_graph, int val)
 void print_visited(graph_t *p_graph)
 {
     for (int i = 0; i < p_graph->count_vertex; ++i)
-        printf("vertex[%d] -> %d\n", i, p_graph->visited[i]);
+        printf("visited_vertex[%d] -> %d\n", i, p_graph->visited[i]);
 
     printf("\n");
 }
