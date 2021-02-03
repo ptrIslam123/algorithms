@@ -9,14 +9,13 @@ struct adj_matrix;
 typedef struct adj_matrix
 {
     int **m;
-    int **visited;
+    int *visited;
     int *weight;
     int size;
 } adj_matrix_t;
 
+//void foo(adj_matrix_t *, int );
 
-
-void print_visited_adj_matrix(adj_matrix_t* );
 void print_adj_matrix(adj_matrix_t* );
 
 void set_val_adj_matrix(adj_matrix_t* , int** );
@@ -51,9 +50,11 @@ typedef struct node
 
 
 
-void    algorithm_dijkstra(graph_t* , int );
-void    eval_weight_graph(graph_t* , int , int );
-void    update_weight_vertex(node_t* , int );
+void    algorithm_floyd(adj_matrix_t*, int );
+void    algorithm_dijkstra(adj_matrix_t* , int );
+void    eval_weight_graph(adj_matrix_t* );
+int     get_min(adj_matrix_t* );
+void    update_weight_vertex(adj_matrix_t* , int );
 
 
 void    dfs(graph_t* , int );
@@ -67,6 +68,8 @@ node_t* remove_edge(graph_t* , int , int );
 
 void    set_visited_val(graph_t* , int );
 
+void    print_visited_adj_matrix(adj_matrix_t* );
+void    print_weight_adj_matrix(adj_matrix_t* );
 void    print_weight_graph(graph_t* );
 void    print_visited(graph_t* );
 void    print_graph(graph_t* );

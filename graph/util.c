@@ -7,6 +7,15 @@
 #define SIZE_ADJ_MATRIX (sizeof(struct adj_matrix))
 
 
+int min(int a, int b)
+{
+    if (a < b)
+        return a;
+    else
+        return b;
+}
+
+
 void add_node_to_adj_list(node_t *vertex, node_t *new_node)
 {
     while (vertex->next_node != NULL)
@@ -67,20 +76,19 @@ adj_matrix_t* make_adj_matrix(int size)
     adj_matrix_t* new_adj_matrix = (adj_matrix_t*)malloc(SIZE_ADJ_MATRIX);
 
     new_adj_matrix->m       = (int**)malloc(sizeof(int*) * size);
-    new_adj_matrix->visited = (int**)malloc(sizeof(int*) * size);
+    new_adj_matrix->visited = (int*)malloc(sizeof(int) * size);
     new_adj_matrix->weight  = (int*)malloc(sizeof(int) * size); 
     new_adj_matrix->size    = size;
 
     for (int i = 0; i < size; ++i)
     {
         new_adj_matrix->m[i]        = (int*)malloc(sizeof(int) * size);
-        new_adj_matrix->visited[i]  = (int*)malloc(sizeof(int) * size);
-        new_adj_matrix->weight[i]   = 0;
+        new_adj_matrix->visited[i]  = _IS_NOT_VISIED_;
+        new_adj_matrix->weight[i]   = INT_MAX;
 
         for (int j = 0 ; j < size; ++j)
         {
             new_adj_matrix->m[i][j] = 0;
-            new_adj_matrix->visited[i][j] = _IS_NOT_VISIED_;
         }
     }
 

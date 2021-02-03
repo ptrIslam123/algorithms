@@ -15,19 +15,26 @@ void test2()
 
     int *v[] = {v0, v1, v2, v3};
 
+
+    int weight_ans[] = {0, 2, 1, 5};
+   
+
     set_val_adj_matrix(m, v);
 
     print_adj_matrix(m);
     
-
-
-    print_visited_adj_matrix(m);
+    //print_weight_adj_matrix(m);
+    //print_visited_adj_matrix(m);
     
     
+    algorithm_floyd(m, 0);
    
 
-    print_visited_adj_matrix(m);
-   
+    print_adj_matrix(m);
+    //print_weight_adj_matrix(m);
+    //print_visited_adj_matrix(m);
+    //test_visited(m->visited, m->size);
+    //test_weight_adj_matrix(m, weight_ans);
 
     /*
     set_matrix_adj_list(m, 0, v0);
@@ -101,13 +108,34 @@ void test1()
     free_graph(g);
 }
 
-void test_visited(graph_t* p_graph)
+
+
+void test_weight_adj_matrix(adj_matrix_t *p_grpah, int *weigth_asnw)
 {
-    for (int i = 0; i < p_graph->count_vertex; ++i)
+    const int size = p_grpah->size;
+    compare_arrays(p_grpah->weight, weigth_asnw, size);
+}
+
+
+void compare_arrays(int *a , int *b , int size)
+{
+    for (int i = 0; i < size; ++i)
     {
-        if (p_graph->visited[i] == _IS_NOT_VISIED_)
+        if (a[i] != b[i])
         {
-            printf("[DEBUG] Error function -> test_visited");
+            printf("[DEBUG_INF] => arrays is not eq\n");
+            exit(-1);
+        }
+    }
+}
+
+void test_visited(int* visited, int count_vertex)
+{
+    for (int i = 0; i < count_vertex; ++i)
+    {
+        if (visited[i] == _IS_NOT_VISIED_)
+        {
+            printf("[DEBUG] Error function -> test_visited\n");
             exit(-1);
         }
     }
@@ -115,10 +143,10 @@ void test_visited(graph_t* p_graph)
 
 void test_bfs(graph_t* p_graph)
 {
-    test_visited(p_graph);
+    test_visited(p_graph->visited, p_graph->count_vertex);
 }
 
 void test_dfs(graph_t* p_graph)
 {
-    test_visited(p_graph);
+    test_visited(p_graph->visited, p_graph->count_vertex);
 }

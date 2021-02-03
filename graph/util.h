@@ -6,7 +6,7 @@
 
 #include "graph.h"
 
-
+int             min(int , int );
 void            add_node_to_adj_list(node_t *, node_t * );
 graph_t*        make_graph(int );
 node_t*         make_node(int );

@@ -4,11 +4,80 @@
 #include "graph.h"
 #include "util.h"
 
+#define TEST
 
-void algorithm_dijkstra(graph_t *p_graph, int vertex)
+
+
+#ifndef TEST
+
+void foo(adj_matrix_t *p_graph, int vertex)
 {
-    p_graph->visited[vertex] = _VISITED_;
-    eval_weight_graph(p_graph, vertex, 0);
+    p_graph->weight[vertex] = 0;
+    int min_index = 0;
+    int min = min_index;
+    int temp = 0;int size = p_graph->size;
+
+    do {
+
+       min_index = INT_MAX;
+       min = min_index;
+
+       for (int i = 0; i < size; ++i)
+       {
+           if (p_graph->visited[i] == _IS_NOT_VISIED_ &&
+                p_graph->weight[i] < min)
+                {
+                    min_index = i;
+                    min = p_graph->weight[i];
+                }
+       } 
+
+
+       if (min_index != INT_MAX)
+       {
+           for (int i = 0; i < size; ++i)
+           {
+               temp = min + p_graph->m[min_index][i];
+               if (temp < p_graph->weight[i])
+               {
+                   p_graph->weight[i] = temp;
+               }
+           }
+       }
+
+       p_graph->visited[min_index] = _VISITED_;
+
+    }while (min_index < INT_MAX);
+}
+
+#endif // !TEST
+
+/* НЕОБХОДИМО ДОРАБОТАТЬ */
+void algorithm_floyd(adj_matrix_t *p_graph , int vertex)
+{
+    const int size = p_graph->size;
+
+    for (int k = 0; k < size; ++k)
+    {
+        for (int i = 0; i < size; ++i)
+        {
+            for (int j = 0; j < size; ++j)
+            {
+                p_graph->m[i][j] = min(
+                    p_graph->m[i][j], p_graph->m[i][k] + p_graph->m[k][j]
+                );
+            }
+        }
+    }
+}
+
+
+
+/* НЕОБХОДИМО ДОРАБОТАТЬ */
+void algorithm_dijkstra(adj_matrix_t *p_graph, int vertex)
+{
+    p_graph->weight[vertex] = _VISITED_;
+    eval_weight_graph(p_graph);
 }
 
 
@@ -23,54 +92,85 @@ void algorithm_dijkstra(graph_t *p_graph, int vertex)
         по формуле (weight = weight + parent_weight)
 
 */
-void eval_weight_graph(graph_t *p_graph, int vertex, int parent_weight)
+void eval_weight_graph(adj_matrix_t *p_graph)
 {
-    node_t *cur_vert = p_graph->adj_list[vertex];
-    int cur_num_vert = 0;
+    int min_index = 0;
 
-    while (cur_vert != NULL)
-    {
-        cur_num_vert = cur_vert->num_vertex;
-        
-        if (p_graph->visited[cur_num_vert] == _IS_NOT_VISIED_)
+   do{
+
+        min_index = get_min(p_graph);
+
+        if (min_index != INT_MAX)
         {
-            p_graph->visited[cur_num_vert] = _VISITED_;
-            update_weight_vertex(cur_vert, parent_weight);
-
-            eval_weight_graph(p_graph, cur_num_vert, cur_vert->weight);
+            update_weight_vertex(p_graph, min_index);
         }
-
-        cur_vert = cur_vert->next_node;
-    }
+        p_graph->visited[min_index] = _VISITED_;
+   }while (min_index < INT_MAX);
 }
 
-void update_weight_vertex(node_t *vertex, int parent_weight)
+int get_min(adj_matrix_t *p_graph)
 {
-    int cur_weigth = vertex->weight;
-    int new_weight = cur_weigth + parent_weight;
+    const int size  = p_graph->size;
+    int min_index   = INT_MAX;
+    int min_val     = min_index;
 
-    if (new_weight < cur_weigth)
-    {
-        vertex->weight = new_weight;
-    }
-}
-
-
-
-
-void print_visited_adj_matrix(adj_matrix_t *p_graph)
-{
-    const int size = p_graph->size;
-
-    printf("visited_vertex {\n");
     for (int i = 0; i < size; ++i)
     {
-        for (int j = 0; j < size; ++j)
-            printf(" %d ", p_graph->visited[i][j]);
-        
-        printf("\n");
+        if (p_graph->visited[i] == _IS_NOT_VISIED_ && 
+            p_graph->weight[i] < min_val)
+            {
+                min_val     = p_graph->weight[i];
+                min_index   = i;
+            }
     }
-    printf("}\n");
+    return min_index;   
+}
+
+
+void update_weight_vertex(adj_matrix_t *p_graph, int min_index)
+{
+    int *vertex         = p_graph->m[min_index];
+    int parent_weight   = p_graph->weight[min_index];
+    const int size      = p_graph->size;
+    int new_weight      = 0;
+
+    for (int i = 0; i < size; ++i)
+    {
+        new_weight = parent_weight + vertex[i];
+
+        if (new_weight < p_graph->weight[i])
+        {
+            p_graph->weight[i] = new_weight;
+        }
+    }
+}
+
+
+
+void print_visited_adj_matrix(adj_matrix_t *p_grpah)
+{
+    const int size = p_grpah->size;
+
+    for (int i = 0; i < size; ++i)
+    {
+        printf("visited[%d] -> %d\n",i, p_grpah->visited[i]);
+    }
+    printf("\n");
+}
+
+
+
+void print_weight_adj_matrix(adj_matrix_t* p_graph)
+{
+    const int size = p_graph->size;
+    for (int i = 0; i < size; ++i)
+    {
+        if (p_graph->weight[i] == INT_MAX)
+            printf("vertex_weight[%d] -> INF\n", i);
+        else
+            printf("vertex_weight[%d] -> %d\n", i, p_graph->weight[i]);
+    }
+    printf("\n");
 }
 
 
