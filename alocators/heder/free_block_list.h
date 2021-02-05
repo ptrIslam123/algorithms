@@ -54,15 +54,17 @@ int                     is_empty(struct free_block_list* );
 void                    add_inode_to_free_list(struct free_block_list* , struct inode* );
 struct inode*           remove_inode_from_free_list(struct inode* );
 struct inode*           pop_back(struct inode* );
-struct inode*           pop_front();
+struct inode*           pop_front(struct free_block_list* );
 
 struct free_block_list* make_free_list();
 struct inode*           make_inode(size_t );
 
+void                    delete_free_list(struct free_block_list* );
 
 int                     test_print_block(struct inode* );
 void                    test_print_free_list_struct(free_list_t* );
 void                    test_print_free_blocks_to_free_list();
+void                    print_count_reused_and_new_alloc();
 
 
 #endif // !_ALOCATORS_FREE_BLOCK_LIST_H_

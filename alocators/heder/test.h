@@ -9,6 +9,7 @@ void test1();
 void test2();
 void test3();
 void test4();
+void test5();
 
 void write_log(const char* );
 void readf(const char* file, const char* mes);

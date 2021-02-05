@@ -1,6 +1,14 @@
 #include "heder/test.h"
 
 
+void init_array(int* arr, int size)
+{
+    for (int i = 0 ; i < size; ++i)
+    {
+        arr[i] = rand() % 10000;
+    }
+}
+
 void print_array(const char* str, int* arr, int size)
 {
     for (int i = 0 ; i < size; ++i)
@@ -8,6 +16,29 @@ void print_array(const char* str, int* arr, int size)
         printf("%s[%d] = %d\n" , str, i, arr[i]);
     }
     printf("\n");
+}
+
+
+void test5()
+{
+    int size = 0;
+
+    for (int i = 0; i < 1000; ++i)
+    {
+        size = (rand() % 100) + 1;
+
+        int* arr = allocate(sizeof(int) * size);
+        init_array(arr, size);
+
+        printf("size_array = %d\n" , size);
+        //print_array("arr", arr, size);
+
+        deallocate(arr);
+    }  
+
+    delete_free_list(get_free_list_struct()); 
+
+    print_count_reused_and_new_alloc();
 }
 
 void test4()
@@ -32,6 +63,11 @@ void test4()
 
     deallocate(x);
     deallocate(y);
+
+
+
+
+    delete_free_list(get_free_list_struct());
 }
 
 void test3()

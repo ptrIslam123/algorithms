@@ -5,6 +5,13 @@
 
 //#define _LOG_DEBUG_
 
+#ifndef _LOG_DEBUG_
+            
+int count_reused = 0, count_new_alloc = 0;
+
+#endif // !_LOG_DEBUG_
+
+
 /*
     Аллокатор основан на списке свободных блоков 
     памяти которые мы переиспользуем при каждом(почти каждом) 
@@ -29,12 +36,6 @@
 void*   
 allocate(size_t size)
 {
-#ifndef _LOG_DEBUG_
-    write_log("allocate {\n");
-#endif // !_LOG_DEBUG_
-
-
-
     size_t total_size       = size + SIZE_INODE_STRUCT;
     inode_t* new_inode      = alloc_inode(total_size);
 
@@ -43,40 +44,22 @@ allocate(size_t size)
 
     void* user_mem_block    = ((void*)new_inode) + SIZE_INODE_STRUCT;
 
-
-
-#ifndef _LOG_DEBUG_
-    write_log("}\n\n");
-#endif // !_LOG_DEBUG_
-
     return user_mem_block;
 }
 
 void    
 deallocate(void* free_block)
 {
-#ifndef _LOG_DEBUG_
-    write_log("deallocate {\n");
-#endif // !_LOG_DEBUG_
-
-
     inode_t* p_inode = (struct inode*)(free_block - SIZE_INODE_STRUCT);
 
     p_inode->is_free = _IS_FREE_BLOCK;
     add_inode_to_free_list(get_free_list_struct(), p_inode);
-
-#ifndef _LOG_DEBUG_
-    
-    write_log("");
-
-    write_log("}\n\n");
-#endif // !_LOG_DEBUG_
 }
 
 
 
 
-#define is_not_empty(list) (is_empty(list) >= 0)
+#define is_not_empty(list) (is_empty(list) < 0)
 
 struct inode*           
 alloc_inode(size_t total_size)
@@ -84,16 +67,27 @@ alloc_inode(size_t total_size)
     free_list_t* list = get_free_list_struct();
     inode_t* result = NULL;
 
+    /* если наш список не пуст */
     if (is_not_empty(list))
     {
-        /* если наш список не пуст */
         result = get_suitable_free_block(list, total_size);
 
         /* если среди свобожный блоков нашелся подходящий блок */
         if (result != NULL)
+        {
+#ifndef _LOG_DEBUG_
+            write_log("REUSED_MEM_BLOCK\n");
+            count_reused++;
+#endif // !_LOG_DEBUG_
             return result;
+        }
         else
         {
+#ifndef _LOG_DEBUG_
+            write_log("ALLOCATION_NEW_MEM_BLOCK\n");
+            count_new_alloc++;
+#endif // !_LOG_DEBUG_
+
             /* если не смогли найти подходящий свободный блок,
                 то выделяем в heap`е новый блок памяти */
             return make_inode(total_size);
@@ -101,6 +95,12 @@ alloc_inode(size_t total_size)
     }
     else
     {
+
+#ifndef _LOG_DEBUG_
+            write_log("ALLOCATION_NEW_MEM_BLOCK\n");
+            count_new_alloc++;
+#endif // !_LOG_DEBUG_
+
         return make_inode(total_size);   
     }
 }
@@ -146,13 +146,17 @@ get_suitable_free_block(struct free_block_list* list, size_t need_size)
 {
     inode_t* item = list->begin;
     
+    /* здесь потенциальное зацикливание, проходим циклицески 
+    весь список снова и снова, думаю проблема в том что end и begin 
+    указыват на друг на друга : end -> begin 
+    */
+
     while (item != NULL)
     {
-        if (item->is_free == _IS_FREE_BLOCK &&
-            item->size_block >= need_size)
-            {
-                return item;
-            }
+        if (item->size_block >= need_size)
+        {
+            return item;
+        }
         item = item->next_inode;
     }
     return NULL;
@@ -270,10 +274,8 @@ pop_back(struct inode* p_inode)
 
 
 struct inode*           
-pop_front()
+pop_front(struct free_block_list* list )
 {
-    free_list_t* list = get_free_list_struct();
-    
     inode_t* beg    = list->begin;
     inode_t* tmp    = beg->next_inode;
     
@@ -316,6 +318,23 @@ make_inode(size_t size_inode)
 
 
 
+void                    
+delete_free_list(struct free_block_list* list)
+{
+    struct inode* item = list->begin;
+    inode_t* tmp = NULL;
+
+    while (item != NULL)
+    {
+        tmp = item;
+        item = item->next_inode;
+        free(tmp);
+    }
+
+    free(list);
+}
+
+
 
 int                     
 test_print_block(struct inode* in)
@@ -350,4 +369,12 @@ test_print_free_blocks_to_free_list(struct free_block_list* list)
         test_print_block(item);
         item = item->next_inode;
     }
+}
+
+
+void                    
+print_count_reused_and_new_alloc()
+{
+    printf("count_new_allocation    = %d\n", count_new_alloc);
+    printf("count_resude            = %d\n", count_reused);
 }
