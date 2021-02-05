@@ -7,7 +7,7 @@
 
 #ifndef _LOG_DEBUG_
             
-int count_reused = 0, count_new_alloc = 0;
+static int count_reused = 0, count_new_alloc = 0;
 
 #endif // !_LOG_DEBUG_
 
@@ -106,7 +106,6 @@ alloc_inode(size_t total_size)
 }
 
 
-
 struct free_block_list* 
 get_free_list_struct()
 {
@@ -153,31 +152,21 @@ get_suitable_free_block(struct free_block_list* list, size_t need_size)
 
     while (item != NULL)
     {
+        //printf("item->address = %p\t\t", &item);
+        //printf("item->size = %d\n", item->size_block);
+        //printf("size_list = %d\n", list->size);
         if (item->size_block >= need_size)
         {
-            return item;
+            list->size--;
+            return remove_inode_from_free_list(item);
         }
+
         item = item->next_inode;
     }
     return NULL;
 }
 
 
-struct inode*           
-get_free_block(struct free_block_list* list)
-{
-    inode_t* item = list->begin;
-
-    while (item != NULL)
-    {
-        if (item->is_free == _IS_FREE_BLOCK)
-        {
-            return item;
-        }
-        item = item->next_inode;
-    }
-    return NULL;
-}
 
 
 
@@ -235,8 +224,9 @@ add_inode_to_free_list(struct free_block_list* list,
     }
     else
     {
-        list->end->next_inode = p_inode;
-        list->end = p_inode;
+        list->end->next_inode   = p_inode;
+        p_inode->prev_inode     = list->end;
+        list->end               = p_inode;
     }   
     list->size++;
 }
@@ -245,30 +235,40 @@ add_inode_to_free_list(struct free_block_list* list,
 struct inode*    
 remove_inode_from_free_list(struct inode* p_inode)
 {
-    if (p_inode->next_inode != NULL)
+    struct free_block_list* list = get_free_list_struct();
+
+    /* если это не первый элемент */
+    if (p_inode != list->begin)
     {
-        /* если это последная inode`а в списке */
-        return pop_back(p_inode);
+        inode_t* prev = p_inode->prev_inode;
+
+        prev->next_inode = p_inode->next_inode; // errro
+        p_inode->next_inode = NULL;
+        
+        list->size--;
+
+        return p_inode;
     }
     else
     {
-        inode_t* tmp        = p_inode;
-        p_inode->prev_inode = tmp->next_inode;
-        tmp->is_free        = _IS_NOT_FREE_BLOCK;
-
-        return tmp;
+        /* если это первый элемент */
+        return pop_front(list);
     }
+    
 }
 
 
 struct inode*           
 pop_back(struct inode* p_inode)
 {
-    inode_t* tmp                    = p_inode;
-    p_inode->prev_inode->next_inode = NULL;
-    tmp->is_free                    = _IS_NOT_FREE_BLOCK;
+    inode_t* prev = p_inode->prev_inode;
 
-    return tmp;
+    prev->next_inode = NULL;
+    p_inode->prev_inode = NULL;
+
+    get_free_list_struct()->size--;
+
+    return p_inode;
 }
 
 
@@ -276,13 +276,28 @@ pop_back(struct inode* p_inode)
 struct inode*           
 pop_front(struct free_block_list* list )
 {
-    inode_t* beg    = list->begin;
-    inode_t* tmp    = beg->next_inode;
-    
-    list->begin     = tmp;
-    tmp->prev_inode = NULL;
+    if (list->size <= 1)
+    {
+        list->size      = 0;
+        inode_t* ret    = list->begin;
+        list->begin     = NULL;
 
-    return beg;
+        return ret;
+    }
+
+    inode_t* new_beg    = list->begin->next_inode;
+    inode_t* tmp        = list->begin;
+
+    list->begin         = new_beg;
+
+
+    printf("blokc->size = %d\n", list->begin->size_block);
+    list->begin->prev_inode = NULL; // error
+    tmp->next_inode         = NULL; 
+
+    list->size--;
+
+    return tmp;
 }
 
 
@@ -318,15 +333,25 @@ make_inode(size_t size_inode)
 
 
 
+struct inode*           
+get_inode(void* p)
+{
+    struct inode* ret = (struct inode*)(p - SIZE_INODE_STRUCT);
+    return ret;
+}
+
+
 void                    
 delete_free_list(struct free_block_list* list)
 {
+    
     struct inode* item = list->begin;
     inode_t* tmp = NULL;
 
     while (item != NULL)
     {
         tmp = item;
+
         item = item->next_inode;
         free(tmp);
     }
@@ -352,7 +377,7 @@ test_print_free_list_struct(free_list_t* list)
 
     while (item != NULL)
     {
-        printf("item->size = %d\n", item->size_block);
+        test_print_block(item);
         item = item->next_inode;
     }
     printf("\n");
@@ -365,7 +390,7 @@ test_print_free_blocks_to_free_list(struct free_block_list* list)
     inode_t* item = list->begin;
 
     while (item != NULL)
-    {
+    {   
         test_print_block(item);
         item = item->next_inode;
     }
@@ -375,6 +400,8 @@ test_print_free_blocks_to_free_list(struct free_block_list* list)
 void                    
 print_count_reused_and_new_alloc()
 {
+#ifndef _LOG_DEBUG_
     printf("count_new_allocation    = %d\n", count_new_alloc);
     printf("count_resude            = %d\n", count_reused);
+#endif // !_LOG_DEBUG_
 }

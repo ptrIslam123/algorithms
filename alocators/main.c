@@ -13,8 +13,12 @@ int main()
     //test2();
     //test3();
     //test4();
-    test5();
-    
+    test5();  // error
+    //test6();
+    //test7();
+
+    //test_pop_front();
+    //test_delete_free_list();
 
     return 0;
 }

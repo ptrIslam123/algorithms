@@ -45,7 +45,6 @@ struct free_block_list* get_free_list_struct();
 
 
 struct inode*           get_suitable_free_block(struct free_block_list* , size_t );
-struct inode*           get_free_block(struct free_block_list* );
 int                     search_free_inode(struct inode* , struct inode* ); 
 
 void                    for_each(struct free_block_list* , inode_t* , funct_t );
@@ -58,6 +57,8 @@ struct inode*           pop_front(struct free_block_list* );
 
 struct free_block_list* make_free_list();
 struct inode*           make_inode(size_t );
+
+struct inode*           get_inode(void* );
 
 void                    delete_free_list(struct free_block_list* );
 
