@@ -1,15 +1,37 @@
 #include "heder/test.h"
 
 
+void print_array(const char* str, int* arr, int size)
+{
+    for (int i = 0 ; i < size; ++i)
+    {
+        printf("%s[%d] = %d\n" , str, i, arr[i]);
+    }
+    printf("\n");
+}
+
 void test4()
 {
-    int* x = allocate(sizeof(int));
+    const int size = 10;
+    int* x = allocate(sizeof(int) * size);
+    int* y = allocate(sizeof(int) * size);
+    
+    for (int i = 0; i < size; ++i)
+    {
+        x[i] = i + i*i;
+    }
 
-    *x = 1223;
 
-    printf("*x = %d\n", *x);
+    for (int i = 0; i < size; ++i)
+    {
+        y[i] = i + (i + 1);
+    }
+
+    print_array("x", x, size);
+    print_array("y", y, size);
 
     deallocate(x);
+    deallocate(y);
 }
 
 void test3()
@@ -67,3 +89,27 @@ void test1()
 
     test_print_free_list_struct(list);
 }
+
+
+
+
+void write_log(const char* data)
+{
+    readf(_LOG_FILE_PATH_, data);
+}
+
+
+void readf(const char* file, const char* mes)
+{
+    FILE* fd = fopen(file, "a");
+    if (fd != NULL)
+    {
+        fputs(mes, fd);
+        fclose(fd);
+    }
+    else
+    {
+        exit(-1);   
+    }
+}
+
